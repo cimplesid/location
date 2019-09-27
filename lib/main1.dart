@@ -1,11 +1,7 @@
-import 'dart:collection';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'main.dart';
-import 'mapUI.dart';
+
 //void main() => runApp(new MyApp());
 
 // class MyApp extends StatelessWidget {
@@ -20,7 +16,7 @@ import 'mapUI.dart';
 // class HomePage extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
-//     // TODO: implement build
+
 //     return MyHomePage();
 //   }
 
@@ -65,6 +61,7 @@ class MyHomePageState extends State<MyHomePage> {
       response = response;
       debugPrint("Response is" + response);
     });
+    print("Response is" + response);
   }
 
   @override

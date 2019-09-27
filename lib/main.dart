@@ -1,12 +1,7 @@
-import 'dart:isolate';
-import 'dart:ui';
+
 
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'dart:async';
-import 'package:geolocator/geolocator.dart';
 
-import 'main1.dart';
 import 'mapUI.dart';
 //import 'package:flutter_geofencing/flutter_geofencing.dart';
 // import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'

@@ -1,46 +1,43 @@
-
-
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'main.dart';
 import 'main1.dart';
 
-var onc=true;
+var onc = true;
 var l;
 var lg;
+
 class Mapp extends StatefulWidget {
   //final response;
   //final once;
   //Mapp({this.response,this.once});
   @override
-  State<Mapp> createState() =>MapPageState();
+  State<Mapp> createState() => MapPageState();
 }
 
 class MapPageState extends State<Mapp> {
+  static const platform = const MethodChannel('flutter.native/helper');
   // final response;
   // var once;
   MapPageState();
-  
+
   bool mapToogle = false;
-  
+
   var currentLocation;
 
   sendData(al, alg) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              return MyHomePage(al,alg);
+      return MyHomePage(al, alg);
     }));
     //MyHomePage(al,alg);
   }
-    
-  
-    
-    
-    void initState() {
+
+  void initState() {
     super.initState();
     Geolocator().getCurrentPosition().then((currLoc) {
       setState(() {
@@ -55,8 +52,26 @@ class MapPageState extends State<Mapp> {
     //print("bool val of once is $once");
     //print("Response is $response");
   }
-  
-  
+
+  String response;
+
+  Future<void> initPlatformState(al, alg) async {
+    try {
+      final String result =
+          await platform.invokeMethod('geofence', <String, dynamic>{
+        't': al,
+        'r': alg,
+      });
+      response = result;
+    } on PlatformException catch (e) {
+      response = "Exception $e";
+    }
+
+    setState(() {
+      response = response;
+    });
+    return response;
+  }
 
   Completer<GoogleMapController> _controller = Completer();
   MapType type;
@@ -86,15 +101,36 @@ class MapPageState extends State<Mapp> {
                         onTap: (position) {
                           l = position.latitude;
                           lg = position.longitude;
-                          print(position);
-                          Marker mk1 = Marker(
-                            markerId: MarkerId('1'),
-                            position: position,
-                          );
-                          setState(() {
-                            markers.add(mk1);
+                          // print(position);
+                          // Marker mk1 = Marker(
+                          //   markerId: MarkerId('1'),
+                          //   position: position,
+                          // );
+                          // setState(() {
+                          //   markers.add(mk1);
+                          // });
+                          // sendData(l, lg);
+                          // Navigator.push(context,
+                          //     MaterialPageRoute(builder: (context) {
+                          //   return MyHomePage(l, lg);
+                          // }));
+                          initPlatformState(l, lg).then((onValue) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("LatLng from onTap"),
+                                  content: Text("$response"),
+                                  actions: [
+                                    FlatButton(
+                                      child: Text("OK"),
+                                      onPressed: () => Navigator.pop(context),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           });
-                          sendData(l, lg);
                         },
                         initialCameraPosition: CameraPosition(
                           target: LatLng(currentLocation.latitude,
@@ -159,7 +195,7 @@ class MapPageState extends State<Mapp> {
 // class AlertMessage extends StatefulWidget{
 //   @override
 //   State<StatefulWidget> createState() {
-    
+
 //     return AlertMessageState();
 //   }
 // }
